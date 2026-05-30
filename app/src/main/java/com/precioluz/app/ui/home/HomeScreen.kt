@@ -1,21 +1,24 @@
 package com.precioluz.app.ui.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.precioluz.app.domain.model.PriceCategory
 import com.precioluz.app.domain.model.PriceDay
 import com.precioluz.app.domain.model.PriceHour
-import com.precioluz.app.domain.model.PriceTier
-import com.precioluz.app.domain.model.tier
-import com.precioluz.app.ui.theme.tierColor
+import com.precioluz.app.domain.model.category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +36,7 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = onSettingsClick) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Settings,
+                            imageVector = Icons.Filled.Settings,
                             contentDescription = "Ajustes"
                         )
                     }
@@ -75,10 +78,10 @@ fun HomeScreen(
                     )
                     if (prices != null) {
                         PriceSummaryCard(prices)
-                        PriceChart(
+                        PriceChartList(
                             prices = prices,
                             onHourSelected = onHourSelected,
-                            darkTheme = !MaterialTheme.colorScheme.surface.luminance().let { it > 0.5f }
+                            darkTheme = isSystemInDarkTheme()
                         )
                     } else {
                         Box(
@@ -141,7 +144,7 @@ private fun PriceSummaryCard(day: PriceDay) {
                     label = "Más barata",
                     value = "${cheapest.hour}:00h",
                     price = cheapest.priceKwh,
-                    color = tierColor(PriceTier.CHEAP, !isSystemInDarkTheme().let { !it })
+                    color = categoryColor(PriceCategory.CHEAP, isSystemInDarkTheme())
                 )
             }
             day.max?.let { dearest ->
@@ -149,7 +152,7 @@ private fun PriceSummaryCard(day: PriceDay) {
                     label = "Más cara",
                     value = "${dearest.hour}:00h",
                     price = dearest.priceKwh,
-                    color = tierColor(PriceTier.DEAR, !isSystemInDarkTheme().let { !it })
+                    color = categoryColor(PriceCategory.DEAR, isSystemInDarkTheme())
                 )
             }
             SummaryItem(
@@ -163,12 +166,7 @@ private fun PriceSummaryCard(day: PriceDay) {
 }
 
 @Composable
-private fun SummaryItem(
-    label: String,
-    value: String,
-    price: Double,
-    color: androidx.compose.ui.graphics.Color
-) {
+private fun SummaryItem(label: String, value: String, price: Double, color: Color) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(label, style = MaterialTheme.typography.labelSmall, color = color)
         if (value.isNotEmpty()) {
@@ -178,24 +176,20 @@ private fun SummaryItem(
             formatPrice(price),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = color
+            color = color,
         )
     }
 }
 
 @Composable
-private fun PriceChart(
-    prices: PriceDay,
-    onHourSelected: (PriceHour?) -> Unit,
-    darkTheme: Boolean
-) {
+private fun PriceChartList(prices: PriceDay, onHourSelected: (PriceHour?) -> Unit, darkTheme: Boolean) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         items(prices.prices) { priceHour ->
-            val tier = priceHour.tier(prices)
-            val color = tierColor(tier, darkTheme)
+            val cat   = priceHour.category(prices)
+            val color = categoryColor(cat, darkTheme)
 
             Row(
                 modifier = Modifier
@@ -205,37 +199,39 @@ private fun PriceChart(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${priceHour.hour.toString().padStart(2, '0')}h",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.width(40.dp)
+                    text     = "${priceHour.hour.toString().padStart(2, '0')}h",
+                    style    = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.width(40.dp),
                 )
                 LinearProgressIndicator(
                     progress = {
                         val maxPrice = prices.max?.priceKwh ?: 1.0
                         (priceHour.priceKwh / maxPrice).toFloat().coerceIn(0f, 1f)
                     },
-                    color = color,
+                    color    = color,
                     modifier = Modifier
                         .weight(1f)
                         .height(12.dp)
                         .padding(horizontal = 8.dp),
                 )
                 Text(
-                    text = formatPrice(priceHour.priceKwh),
-                    style = MaterialTheme.typography.bodyMedium,
+                    text      = formatPrice(priceHour.priceKwh),
+                    style     = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(80.dp),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    modifier  = Modifier.width(80.dp),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.End,
                 )
             }
         }
     }
 }
 
-private fun formatPrice(priceKwh: Double): String {
-    return String.format("%.4f", priceKwh).replace(".", ",") + " €/kWh"
+private fun categoryColor(cat: PriceCategory, dark: Boolean): Color = when (cat) {
+    PriceCategory.CHEAP      -> if (dark) Color(0xFF30D158) else Color(0xFF15A34A)
+    PriceCategory.AFFORDABLE -> if (dark) Color(0xFFFFD60A) else Color(0xFFC28A00)
+    PriceCategory.MEDIUM     -> if (dark) Color(0xFFFF9F0A) else Color(0xFFE26A07)
+    PriceCategory.DEAR       -> if (dark) Color(0xFFFF6961) else Color(0xFFE11D2E)
 }
 
-private fun androidx.compose.ui.graphics.Color.luminance(): Float {
-    return (0.299f * red + 0.587f * green + 0.114f * blue)
-}
+private fun formatPrice(priceKwh: Double): String =
+    String.format("%.4f", priceKwh).replace(".", ",") + " €/kWh"
