@@ -1,0 +1,96 @@
+# ═══════════════════════════════════════════
+#  PrecioLuzApp · .gitignore
+# ═══════════════════════════════════════════
+
+# ── OS generated ──────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ── Hidden files & dirs ───────────────────
+.*
+!/.gitignore
+!/.gitkeep
+
+# ── Environment & secrets ─────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+
+# ── Node / JS ─────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.npm
+.yarn/
+
+# ── Build / dist ──────────────────────────
+dist/
+build/
+out/
+.cache/
+*.tsbuildinfo
+
+# ── IDE / Editor ──────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# ── Android (React Native / Capacitor) ────
+android/app/build/
+android/.gradle/
+android/local.properties
+android/*/build/
+android/**/build/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# ── iOS (Xcode) ───────────────────────────
+ios/build/
+ios/Pods/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+*.xcuserstate
+DerivedData/
+*.hmap
+*.ipa
+
+# ── Capacitor / Cordova ───────────────────
+node_modules/
+capacitor.config.ts
+android/
+ios/
+
+# ── Logs ──────────────────────────────────
+logs/
+*.log
+
+# ── Misc ──────────────────────────────────
+*.bak
+*.tmp
+*.orig
+coverage/
+.nyc_output/
+design-canvas.state.json
