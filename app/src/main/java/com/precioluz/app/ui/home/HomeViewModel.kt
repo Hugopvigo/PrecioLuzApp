@@ -3,6 +3,7 @@ package com.precioluz.app.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.precioluz.app.domain.model.DateTarget
+import com.precioluz.app.domain.model.PriceHour
 import com.precioluz.app.domain.usecase.GetPricesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
