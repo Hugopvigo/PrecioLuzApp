@@ -1,0 +1,67 @@
+[versions]
+agp                     = "8.8.2"
+kotlin                  = "2.1.20"
+ksp                     = "2.1.20-1.0.32"
+composeBom              = "2024.12.01"
+activityCompose         = "1.10.1"
+navigationCompose       = "2.8.9"
+lifecycleViewmodel      = "2.8.7"
+hilt                    = "2.54"
+hiltNavigationCompose   = "1.2.0"
+ktor                    = "3.1.3"
+kotlinxCoroutines       = "1.10.1"
+kotlinxSerializationJson = "1.8.1"
+datastore               = "1.1.3"
+coreKtx                 = "1.15.0"
+splashscreen            = "1.0.1"
+
+[libraries]
+# AndroidX core
+core-ktx               = { group = "androidx.core",           name = "core-ktx",              version.ref = "coreKtx" }
+splashscreen           = { group = "androidx.core",           name = "core-splashscreen",      version.ref = "splashscreen" }
+
+# Compose BOM — controla todas las versiones de Compose
+compose-bom            = { group = "androidx.compose",        name = "compose-bom",            version.ref = "composeBom" }
+compose-ui             = { group = "androidx.compose.ui",     name = "ui" }
+compose-ui-graphics    = { group = "androidx.compose.ui",     name = "ui-graphics" }
+compose-material3      = { group = "androidx.compose.material3", name = "material3" }
+compose-animation      = { group = "androidx.compose.animation", name = "animation" }
+compose-runtime        = { group = "androidx.compose.runtime", name = "runtime" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-tooling     = { group = "androidx.compose.ui",     name = "ui-tooling" }
+activity-compose       = { group = "androidx.activity",       name = "activity-compose",       version.ref = "activityCompose" }
+
+# Navigation
+navigation-compose     = { group = "androidx.navigation",     name = "navigation-compose",     version.ref = "navigationCompose" }
+
+# Lifecycle / ViewModel
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodel" }
+lifecycle-runtime-compose   = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose",   version.ref = "lifecycleViewmodel" }
+
+# Hilt (DI)
+hilt-android           = { group = "com.google.dagger",       name = "hilt-android",           version.ref = "hilt" }
+hilt-compiler          = { group = "com.google.dagger",       name = "hilt-android-compiler",  version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt",          name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
+# Ktor (HTTP client)
+ktor-client-android    = { group = "io.ktor",                 name = "ktor-client-android",         version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor",        name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-json = { group = "io.ktor",                name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging    = { group = "io.ktor",                 name = "ktor-client-logging",        version.ref = "ktor" }
+
+# Coroutines
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+
+# Serialización JSON
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
+# DataStore (preferencias tema, etc.)
+datastore-preferences  = { group = "androidx.datastore",      name = "datastore-preferences",  version.ref = "datastore" }
+
+[plugins]
+android-application    = { id = "com.android.application",                      version.ref = "agp" }
+kotlin-android         = { id = "org.jetbrains.kotlin.android",                 version.ref = "kotlin" }
+kotlin-compose         = { id = "org.jetbrains.kotlin.plugin.compose",          version.ref = "kotlin" }
+kotlin-serialization   = { id = "org.jetbrains.kotlin.plugin.serialization",    version.ref = "kotlin" }
+hilt                   = { id = "com.google.dagger.hilt.android",               version.ref = "hilt" }
+ksp                    = { id = "com.google.devtools.ksp",                       version.ref = "ksp" }
