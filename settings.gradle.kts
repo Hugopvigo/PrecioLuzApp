@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PrecioLuzApp"
+rootProject.name = "PrecioLuz"
 include(":app")

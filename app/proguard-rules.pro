@@ -1,15 +1,14 @@
-# Ktor
--keep class io.ktor.** { *; }
--keepnames class io.ktor.** { *; }
--dontwarn kotlinx.atomicfu.**
--dontwarn io.ktor.**
+# Proguard rules for PrecioLuz App
 
-# Kotlinx Serialization
--keepattributes *Annotation*, InnerClasses
--dontnote kotlinx.serialization.AnnotationsKt
--keepclassmembers class kotlinx.serialization.json.** { *** Companion; }
--keepclasseswithmembers class es.hugopvigo.precioluz.data.api.** { *; }
+# Retrofit & kotlinx-serialization
+-keepattributes *Annotation*, Signature
+-keep class kotlinx.serialization.** { *; }
+-keepclassmembers class kotlinx.serialization.** { *; }
+-keep class com.precioluz.app.data.network.** { *; }
 
-# Hilt
--keep class dagger.hilt.** { *; }
--keep @dagger.hilt.android.lifecycle.HiltViewModel class * { *; }
+# OkHttp
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# Room
+-keep class * extends androidx.room.RoomDatabase { *; }
