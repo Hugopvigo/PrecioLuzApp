@@ -95,7 +95,11 @@ private fun RecoRow(
                 color = labelColor,
             )
             Spacer(Modifier.height(2.dp))
-            Text(value, style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text  = value,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
         }
     }
 }

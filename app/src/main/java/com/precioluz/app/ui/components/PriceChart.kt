@@ -31,7 +31,11 @@ fun PriceChart(
     GlassCard(modifier = modifier.fillMaxWidth(), isDark = isDark) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("24 horas", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text  = "24 horas",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
                 Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
                     val selH      = day.hours[selectedHour]
                     val tierColor = if (isDark) selH.tier.colorDark() else selH.tier.colorLight()

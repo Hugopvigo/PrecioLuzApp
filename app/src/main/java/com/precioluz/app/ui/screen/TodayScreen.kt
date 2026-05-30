@@ -33,7 +33,11 @@ fun TodayScreen(
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Column {
-                    Text("Hoy", style = MaterialTheme.typography.displayMedium)
+                    Text(
+                        text  = "Hoy",
+                        style = MaterialTheme.typography.displayMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
                     Text(
                         text  = day.date.format(esDateFormatter)
                             .replaceFirstChar { it.uppercase() },
