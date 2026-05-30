@@ -198,10 +198,16 @@ fun AppHeader(
         }
         Spacer(Modifier.width(11.dp))
         Column {
-            Text("PrecioLuz", style = MaterialTheme.typography.titleLarge)
-            Text("Precio de la luz · PVPC",
-                 style = MaterialTheme.typography.labelMedium,
-                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = .44f))
+            Text(
+                text  = "PrecioLuz",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text  = "Precio de la luz · PVPC",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .44f),
+            )
         }
         Spacer(Modifier.weight(1f))
 
