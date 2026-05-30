@@ -4,65 +4,210 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.NightsStay
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.precioluz.app.ui.home.HomeScreen
-import com.precioluz.app.ui.home.HomeViewModel
-import com.precioluz.app.ui.settings.SettingsScreen
-import com.precioluz.app.ui.settings.SettingsViewModel
-import com.precioluz.app.ui.theme.PrecioLuzTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import com.precioluz.app.data.datastore.AppTheme
+import com.precioluz.app.ui.components.AuroraBackground
+import com.precioluz.app.ui.components.FloatingTabBar
+import com.precioluz.app.ui.components.GlassCard
+import com.precioluz.app.ui.components.SettingsDialog
+import com.precioluz.app.ui.screen.TodayScreen
+import com.precioluz.app.ui.screen.TomorrowScreen
+import com.precioluz.app.ui.theme.BrandOrangeEnd
+import com.precioluz.app.ui.theme.PrecioLuzTheme
+import com.precioluz.app.ui.viewmodel.PrecioLuzViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PrecioLuzTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    PrecioLuzNavHost()
-                }
+            val vm: PrecioLuzViewModel = hiltViewModel()
+            val uiState by vm.uiState.collectAsStateWithLifecycle()
+            val theme   by vm.theme.collectAsStateWithLifecycle()
+            val apiKey  by vm.apiKey.collectAsStateWithLifecycle()
+
+            PrecioLuzTheme(appTheme = theme) {
+                PrecioLuzApp(
+                    uiState      = uiState,
+                    appTheme     = theme,
+                    apiKey       = apiKey,
+                    onCycleTheme = vm::cycleTheme,
+                    onRefresh    = vm::refresh,
+                    onSaveApiKey = vm::saveApiKey,
+                    onClearApiKey = vm::clearApiKey,
+                )
             }
         }
     }
 }
 
-@androidx.compose.runtime.Composable
-private fun PrecioLuzNavHost() {
-    val navController = androidx.navigation.compose.rememberNavController()
+@Composable
+fun PrecioLuzApp(
+    uiState: com.precioluz.app.ui.viewmodel.PrecioLuzUiState,
+    appTheme: AppTheme,
+    apiKey: String?,
+    onCycleTheme: () -> Unit,
+    onRefresh: () -> Unit,
+    onSaveApiKey: (String) -> Unit,
+    onClearApiKey: () -> Unit,
+) {
+    val isDark = when (appTheme) {
+        AppTheme.AUTO  -> isSystemInDarkTheme()
+        AppTheme.LIGHT -> false
+        AppTheme.DARK  -> true
+    }
+    var selectedTab by remember { mutableIntStateOf(0) }
+    var showSettings by remember { mutableStateOf(false) }
 
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            val viewModel: HomeViewModel = hiltViewModel()
-            val uiState by viewModel.uiState.collectAsState()
+    Box(modifier = Modifier.fillMaxSize()) {
+        AuroraBackground(isDark = isDark, modifier = Modifier.matchParentSize())
 
-            HomeScreen(
-                uiState = uiState,
-                onTabSelected = viewModel::selectTab,
-                onHourSelected = viewModel::selectHour,
-                onRefresh = viewModel::loadPrices,
-                onSettingsClick = { navController.navigate("settings") }
-            )
+        if (uiState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        } else {
+            Column(modifier = Modifier.fillMaxSize()) {
+                AppHeader(
+                    appTheme      = appTheme,
+                    onCycleTheme  = onCycleTheme,
+                    onOpenSettings = { showSettings = true },
+                    isDark        = isDark,
+                    modifier      = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+
+                if (uiState.noApiKey) {
+                    GlassCard(
+                        isDark = isDark,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp),
+                    ) {
+                        Text(
+                            text = "Configura tu API Key de REE en Ajustes para ver los precios",
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        )
+                    }
+                }
+
+                uiState.error?.let { error ->
+                    if (!uiState.noApiKey) {
+                        GlassCard(
+                            isDark = isDark,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                        ) {
+                            Text(
+                                text = error,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                    }
+                }
+
+                Box(modifier = Modifier.weight(1f)) {
+                    when (selectedTab) {
+                        0 -> uiState.today?.let { TodayScreen(it, isDark) }
+                        1 -> TomorrowScreen(uiState.tomorrow, isDark)
+                    }
+                }
+            }
         }
-        composable("settings") {
-            val viewModel: SettingsViewModel = hiltViewModel()
-            val uiState by viewModel.uiState.collectAsState()
 
-            SettingsScreen(
-                uiState = uiState,
-                onBack = { navController.popBackStack() },
-                onNotifyTomorrowChanged = viewModel::setNotifyTomorrow,
-                onNotifyDailyChanged = viewModel::setNotifyDaily,
-                onDarkThemeChanged = viewModel::setDarkTheme
-            )
+        FloatingTabBar(
+            selectedTab   = selectedTab,
+            onTabSelected = { selectedTab = it },
+            isDark        = isDark,
+            modifier      = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(bottom = 24.dp),
+        )
+    }
+
+    if (showSettings) {
+        SettingsDialog(
+            currentApiKey = apiKey,
+            isDark        = isDark,
+            onDismiss     = { showSettings = false },
+            onSave        = { onSaveApiKey(it); showSettings = false },
+            onClear       = { onClearApiKey(); showSettings = false },
+        )
+    }
+}
+
+@Composable
+fun AppHeader(
+    appTheme: AppTheme,
+    onCycleTheme: () -> Unit,
+    onOpenSettings: () -> Unit,
+    isDark: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier        = Modifier
+                .size(38.dp)
+                .padding(end = 4.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.Rounded.AutoAwesome, contentDescription = null,
+                 tint = BrandOrangeEnd)
+        }
+        Spacer(Modifier.width(7.dp))
+        Column {
+            Text("PrecioLuz", style = MaterialTheme.typography.titleLarge)
+            Text("Precio de la luz · PVPC",
+                 style = MaterialTheme.typography.labelMedium,
+                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = .44f))
+        }
+        Spacer(Modifier.weight(1f))
+
+        GlassCard(isDark = isDark) {
+            IconButton(onClick = onCycleTheme, modifier = Modifier.size(40.dp)) {
+                Icon(
+                    imageVector = when (appTheme) {
+                        AppTheme.AUTO  -> Icons.Rounded.AutoAwesome
+                        AppTheme.LIGHT -> Icons.Rounded.LightMode
+                        AppTheme.DARK  -> Icons.Rounded.NightsStay
+                    },
+                    contentDescription = "Cambiar tema",
+                )
+            }
+        }
+
+        Spacer(Modifier.width(8.dp))
+
+        GlassCard(isDark = isDark) {
+            IconButton(onClick = onOpenSettings, modifier = Modifier.size(40.dp)) {
+                Icon(
+                    imageVector = Icons.Rounded.Settings,
+                    contentDescription = "Ajustes",
+                )
+            }
         }
     }
 }

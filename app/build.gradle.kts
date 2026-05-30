@@ -8,15 +8,15 @@ plugins {
 }
 
 android {
-    namespace = "com.precioluz.app"
-    compileSdk = 35
+    namespace   = "com.precioluz.app"
+    compileSdk  = 36
 
     defaultConfig {
         applicationId = "com.precioluz.app"
-        minSdk = 26
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        minSdk        = 26          // Android 8.0 — cubre el 95 %+ de dispositivos
+        targetSdk     = 36          // Android 16
+        versionCode   = 1
+        versionName   = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,7 +60,14 @@ dependencies {
     // Compose BOM
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
     implementation(composeBom)
-    androidTestImplementation(composeBom)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
+    implementation(libs.compose.animation)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
 
     // Compose
     implementation("androidx.compose.ui:ui")
@@ -112,6 +119,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+    // EncryptedSharedPreferences (API Key cifrada)
+    implementation(libs.security.crypto)
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
@@ -124,4 +134,3 @@ dependencies {
 secrets {
     propertiesFileName = "local.properties"
     defaultPropertiesFileName = "local.properties.template"
-}
