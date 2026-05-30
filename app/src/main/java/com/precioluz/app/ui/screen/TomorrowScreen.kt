@@ -5,14 +5,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.precioluz.app.domain.model.DayPrices
 import com.precioluz.app.ui.components.*
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+private val esDateFormatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM", Locale("es", "ES"))
 
 @Composable
 fun TomorrowScreen(
-    day: DayPrices?,        // null = precios aún no publicados (antes de las 20:15)
+    day: DayPrices?,
     isDark: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -31,13 +36,17 @@ fun TomorrowScreen(
                 Column {
                     Text("Mañana", style = MaterialTheme.typography.displayMedium)
                     Text(
-                        text  = day.date.toString(),   // TODO: formatear en español
+                        text  = day.date.format(esDateFormatter)
+                            .replaceFirstChar { it.uppercase() },
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = .62f),
                     )
                 }
-                Text("Previsión", style = MaterialTheme.typography.labelMedium,
-                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = .62f))
+                Text(
+                    text  = "Previsión",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = .62f),
+                )
             }
         }
 
@@ -49,7 +58,7 @@ fun TomorrowScreen(
 
         item {
             Text(
-                text  = "Datos PVPC · ${day.date} · precios con impuestos incluidos",
+                text  = "Datos PVPC · ${day.date.format(DateTimeFormatter.ofPattern("d MMM", Locale("es","ES")))} · precios con impuestos incluidos",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = .44f),
                 modifier = Modifier
@@ -62,12 +71,12 @@ fun TomorrowScreen(
 
 @Composable
 private fun NotReadyYet(modifier: Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-        Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text("⏳", style = MaterialTheme.typography.displayMedium)
             Spacer(Modifier.height(12.dp))
             Text(
-                "Los precios de mañana se publican\naproximadamente a las 20:15",
+                text  = "Los precios de mañana se publican\naproximadamente a las 20:15",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = .66f),
             )
