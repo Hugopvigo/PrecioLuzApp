@@ -15,23 +15,24 @@ data class PriceDay(
     val max: PriceHour? get() = prices.maxByOrNull { it.priceKwh }
 }
 
-enum class PriceTier {
+// Enum separado de PriceTier.kt (GREEN/YELLOW/ORANGE/RED) para evitar conflicto de nombres
+enum class PriceCategory {
     CHEAP,
     AFFORDABLE,
     MEDIUM,
     DEAR
 }
 
-fun PriceHour.tier(day: PriceDay): PriceTier {
+fun PriceHour.category(day: PriceDay): PriceCategory {
     val sorted = day.prices.map { it.priceKwh }.sorted()
     val p25 = sorted.percentile(25)
     val p50 = sorted.percentile(50)
     val p75 = sorted.percentile(75)
     return when {
-        priceKwh <= p25 -> PriceTier.CHEAP
-        priceKwh <= p50 -> PriceTier.AFFORDABLE
-        priceKwh <= p75 -> PriceTier.MEDIUM
-        else -> PriceTier.DEAR
+        priceKwh <= p25 -> PriceCategory.CHEAP
+        priceKwh <= p50 -> PriceCategory.AFFORDABLE
+        priceKwh <= p75 -> PriceCategory.MEDIUM
+        else -> PriceCategory.DEAR
     }
 }
 
