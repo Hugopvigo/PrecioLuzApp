@@ -68,12 +68,12 @@ fun HourList(
                         .padding(horizontal = if (isNow) 8.dp else 0.dp, vertical = 9.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    // Hora
+                    // Hora (formato corto — "00h" en vez de "00–01h" para ganar espacio)
                     Text(
-                        text  = "${h.hour.toString().padStart(2, '0')}–${(h.hour + 1).toString().padStart(2, '0')}h",
+                        text  = "${h.hour.toString().padStart(2, '0')}h",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.width(60.dp),
+                        modifier = Modifier.width(38.dp),
                     )
 
                     // Tramo con punto de color

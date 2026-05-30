@@ -40,6 +40,6 @@ val Typography = Typography(
     // Precio en lista de horas
     bodyMedium = TextStyle(
         fontWeight = FontWeight.Bold,
-        fontSize   = 13.sp,
+        fontSize   = 14.sp,
     ),
 )
