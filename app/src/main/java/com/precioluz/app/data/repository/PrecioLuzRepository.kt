@@ -36,11 +36,14 @@ class PrecioLuzRepository @Inject constructor(
 
     // ── Fetching + transformación ─────────────────────────────
     private suspend fun fetchDay(date: LocalDate): DayPrices {
-        val response = api.getPrices(date)
+        val response  = api.getPrices(date)
         val rawValues = response.included
             .firstOrNull { it.type == "PreciosPVPC" }
             ?.attributes?.values
+            ?.takeIf { it.isNotEmpty() }
             ?: response.data.attributes.values
+
+        if (rawValues.isEmpty()) throw Exception("NO_DATA")
 
         // €/MWh → €/kWh (/ 1000). IVA ya incluido en PVPC desde 2021.
         val prices = rawValues.take(24).mapIndexed { idx, v ->

@@ -22,16 +22,16 @@ data class PvpcData(
 
 @Serializable
 data class PvpcAttributes(
-    val title: String,
-    @SerialName("last-update") val lastUpdate: String,
-    val values: List<PvpcValue>,
+    val title: String = "",
+    @SerialName("last-update") val lastUpdate: String? = null,
+    val values: List<PvpcValue> = emptyList(),   // Presente en included[], ausente en data.attributes
 )
 
 @Serializable
 data class PvpcValue(
-    val value: Double,      // €/MWh sin impuestos — convertir a €/kWh y aplicar VAT
-    val percentage: Double,
-    val datetime: String,   // ISO 8601 con zona horaria
+    val value: Double,
+    val percentage: Double = 0.0,
+    val datetime: String,
 )
 
 @Serializable
