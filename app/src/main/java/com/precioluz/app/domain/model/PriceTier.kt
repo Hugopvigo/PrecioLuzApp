@@ -10,15 +10,15 @@ enum class PriceTier {
 
     fun colorLight(): Color = when (this) {
         GREEN  -> Color(0xFF15A34A)
-        YELLOW -> Color(0xFFC28A00)
-        ORANGE -> Color(0xFFE26A07)
+        YELLOW -> Color(0xFFB89500)   // amarillo más puro
+        ORANGE -> Color(0xFFD95200)   // naranja más cálido
         RED    -> Color(0xFFE11D2E)
     }
 
     fun colorDark(): Color = when (this) {
         GREEN  -> Color(0xFF30D158)
-        YELLOW -> Color(0xFFFFD60A)
-        ORANGE -> Color(0xFFFF9F0A)
+        YELLOW -> Color(0xFFFFE433)   // amarillo más vivo
+        ORANGE -> Color(0xFFFF7020)   // naranja más definido
         RED    -> Color(0xFFFF6961)
     }
 
