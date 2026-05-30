@@ -36,6 +36,7 @@ class EsiosApi @Inject constructor(
 
         val url = BASE_URL.toHttpUrl().newBuilder()
             .addQueryParameter("time_trunc", "hour")
+            .addQueryParameter("geo_ids",    "8741")   // 8741 = Península
             .addQueryParameter("start_date", start)
             .addQueryParameter("end_date",   end)
             .build()

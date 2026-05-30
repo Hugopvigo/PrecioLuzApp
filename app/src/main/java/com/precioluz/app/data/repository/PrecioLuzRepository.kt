@@ -37,10 +37,13 @@ class PrecioLuzRepository @Inject constructor(
     // ── Fetching + transformación ─────────────────────────────
     private suspend fun fetchDay(date: LocalDate): DayPrices {
         val response  = api.getPrices(date)
+        // La API devuelve type="PVPC" con exactamente 24 valores horarios
         val rawValues = response.included
-            .firstOrNull { it.type == "PreciosPVPC" }
+            .firstOrNull { it.type == "PVPC" && it.attributes.values.size == 24 }
             ?.attributes?.values
-            ?.takeIf { it.isNotEmpty() }
+            ?: response.included
+                .firstOrNull { it.attributes.values.size == 24 }
+                ?.attributes?.values
             ?: response.data.attributes.values
 
         if (rawValues.isEmpty()) throw Exception("NO_DATA")
