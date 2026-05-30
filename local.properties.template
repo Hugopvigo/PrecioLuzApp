@@ -1,0 +1,6 @@
+# Template para local.properties
+# Copia este archivo como local.properties y rellena con tus valores
+# NUNCA commitees local.properties al repositorio
+
+# API Key de REE ESIOS (solicítala en api_token@ree.es)
+ESIOS_API_TOKEN=tu_token_aqui
