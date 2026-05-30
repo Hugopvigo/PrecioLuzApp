@@ -41,9 +41,9 @@
 
 <div align="center">
 
-![PrecioLuz Dark](src/PrecioLuzAppDark.jpg)
-
-![PrecioLuz Clear](src/PrecioLuzAppClear.jpg)
+| | |
+|:---:|:---:|
+| ![PrecioLuz Dark](src/PrecioLuzAppDark.jpg) | ![PrecioLuz Clear](src/PrecioLuzAppClear.jpg) |
 
 </div>
 
