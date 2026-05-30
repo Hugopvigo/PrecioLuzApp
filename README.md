@@ -39,29 +39,13 @@
 
 ## 📸 Vista previa
 
-```
-┌─────────────────────────┐
-│  ⚡ PrecioLuz           │
-│  ─────────────────────  │
-│                         │
-│     Ahora · 14–15h      │
-│                         │
-│    🟢 0.135 €/kWh      │
-│    Moderado · Sube      │
-│                         │
-│  💰 0.080  │ 📊 0.130  │ 💀 0.245  │
-│  Mínima    │  Media     │  Máxima   │
-│                         │
-│  ┌─────────────────┐   │
-│  │ ██████░░░░░░░░░ │   │
-│  │ ████░░░░░░░░░░░ │   │
-│  │ █████████████░░ │   │
-│  └─────────────────┘   │
-│         24 horas        │
-│                         │
-│  [ ☀️ Hoy ] [ 🌙 Mañana ]│
-└─────────────────────────┘
-```
+<div align="center">
+
+![PrecioLuz Dark](src/PrecioLuzAppDark.jpg)
+
+![PrecioLuz Clear](src/PrecioLuzAppClear.jpg)
+
+</div>
 
 ---
 
@@ -103,6 +87,7 @@
 ```
 PrecioLuzApp/
 ├── 📄 PrecioLuzApp.html   ← Todo en un solo archivo ✨
+├── 📸 src/                ← Screenshots
 ├── 📝 README.md           ← Estás aquí
 ├── 📜 LICENSE             ← MIT
 └── 🔒 .gitignore          ← Protege tu repo
@@ -128,15 +113,9 @@ Este proyecto está bajo la licencia **MIT** — véase el archivo [LICENSE](LIC
 
 ---
 
-## 💬 ¿Por qué PrecioLuzApp?
-
-> *"Porque saber cuánto cuesta la luz no debería ser complicado."*
-
-Hecho con ❤️ y ⚡ para ahorrar dinero y energía.
-
----
-
 <div align="center">
+
+Hecho con ❤️ y ⚡ para ahorrar dinero y energía por **Hugo Perez-Vigo**
 
 **[⬆ Volver arriba](#-precioluzapp)**
 
