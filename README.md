@@ -57,13 +57,9 @@
 
 <div align="center">
 
-### 🌙 Modo Oscuro
-
-![PrecioLuz Dark](src/PrecioLuzAppDark.jpg)
-
-### ☀️ Modo Claro
-
-![PrecioLuz Clear](src/PrecioLuzAppClear.jpg)
+| 🌙 Modo Oscuro | ☀️ Modo Claro |
+|:--------------:|:-------------:|
+| ![PrecioLuz Dark](src/PrecioLuzAppDark.jpg) | ![PrecioLuz Clear](src/PrecioLuzAppClear.jpg) |
 
 </div>
 
@@ -179,7 +175,7 @@ Este proyecto está bajo la licencia **CC BY-NC-SA 4.0** — véase el archivo [
 
 <div align="center">
 
-Hecho con ❤️ y ⚡ para ahorrar dinero y energía por **Hugo Perez-Vigo**
+Hecho con ❤️ y ⚡ para ahorrar dinero y energía por **[Hugo Perez-Vigo](https://hugopvigo.es)** ([@hugopvigo](https://twitter.com/hugopvigo))
 
 **[⬆ Volver arriba](#-precioluz-app)**
 
