@@ -115,7 +115,7 @@ Este proyecto está bajo la licencia **MIT** — véase el archivo [LICENSE](LIC
 
 <div align="center">
 
-Hecho con ❤️ y ⚡ para ahorrar dinero y energía por **Hugo Perez-Vigo**
+Hecho con ❤️ y ⚡ para ahorrar dinero y energía por **[Hugo Perez-Vigo](https://hugopvigo.es/)** · [@hugopvigo](http://twitter.com/hugopvigo)
 
 **[⬆ Volver arriba](#-precioluzapp)**
 
