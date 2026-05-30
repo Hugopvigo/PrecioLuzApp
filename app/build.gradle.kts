@@ -134,3 +134,4 @@ dependencies {
 secrets {
     propertiesFileName = "local.properties"
     defaultPropertiesFileName = "local.properties.template"
+}
