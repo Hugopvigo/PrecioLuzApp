@@ -21,6 +21,24 @@ import javax.inject.Inject
 
 private const val TAG = "PrecioLuzVM"
 
+private fun mensajeError(e: Throwable): String {
+    val msg = e.message ?: ""
+    return when {
+        msg.contains("API_KEY_MISSING")             -> "API Key no configurada"
+        msg.contains("NO_DATA")                     -> "No hay datos disponibles para esta fecha"
+        msg.contains("HTTP 401")                    -> "API Key inválida o caducada"
+        msg.contains("HTTP 403")                    -> "API Key sin permisos"
+        msg.contains("HTTP 404")                    -> "Datos no disponibles"
+        msg.contains("HTTP 5")                      -> "Error en el servidor de REE. Inténtalo más tarde"
+        msg.contains("UnknownHostException") ||
+        msg.contains("Unable to resolve host") ||
+        msg.contains("NetworkException")            -> "Sin conexión a internet"
+        msg.contains("timeout", ignoreCase = true) ||
+        msg.contains("SocketTimeout")              -> "Tiempo de espera agotado. Comprueba tu conexión"
+        else                                        -> "No se pudieron cargar los precios. Inténtalo de nuevo"
+    }
+}
+
 data class PrecioLuzUiState(
     val today: DayPrices?        = null,
     val tomorrow: DayPrices?     = null,
@@ -91,12 +109,12 @@ class PrecioLuzViewModel @Inject constructor(
                         }
                         .onFailure { e ->
                             Log.e(TAG, "todayPrices: FAIL", e)
-                            _uiState.update { it.copy(error = "Hoy: ${e.message}") }
+                            _uiState.update { it.copy(error = mensajeError(e)) }
                         }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "todayPrices: EXCEPTION", e)
-                _uiState.update { it.copy(error = "Hoy: ${e.message}") }
+                _uiState.update { it.copy(error = mensajeError(e)) }
             }
 
             try {
@@ -112,19 +130,12 @@ class PrecioLuzViewModel @Inject constructor(
                         }
                         .onFailure { e ->
                             Log.e(TAG, "tomorrowPrices: FAIL", e)
-                            _uiState.update { it.copy(
-                                error = if (_uiState.value.error != null) {
-                                    "${_uiState.value.error}\nMañana: ${e.message}"
-                                } else {
-                                    "Mañana: ${e.message}"
-                                },
-                                isLoading = false,
-                            )}
+                            _uiState.update { it.copy(isLoading = false) }
                         }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "tomorrowPrices: EXCEPTION", e)
-                _uiState.update { it.copy(error = "Mañana: ${e.message}", isLoading = false) }
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }

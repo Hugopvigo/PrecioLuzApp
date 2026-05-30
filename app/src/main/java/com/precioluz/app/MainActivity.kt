@@ -214,6 +214,7 @@ fun AppHeader(
                         AppTheme.DARK  -> Icons.Rounded.NightsStay
                     },
                     contentDescription = "Cambiar tema",
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
@@ -225,6 +226,7 @@ fun AppHeader(
                 Icon(
                     imageVector = Icons.Rounded.Settings,
                     contentDescription = "Ajustes",
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
