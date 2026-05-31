@@ -22,7 +22,9 @@ object DatabaseModule {
             context,
             PrecioLuzDatabase::class.java,
             "precioluz.db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration()
+        .build()
     }
 
     @Provides

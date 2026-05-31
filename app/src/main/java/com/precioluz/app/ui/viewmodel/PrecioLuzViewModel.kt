@@ -1,6 +1,5 @@
 package com.precioluz.app.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,12 +22,9 @@ private const val TAG = "PrecioLuzVM"
 private fun mensajeError(e: Throwable): String {
     val msg = e.message ?: ""
     return when {
-        msg.contains("API_KEY_MISSING")             -> "API Key no configurada"
         msg.contains("NO_DATA")                     -> "No hay datos disponibles para esta fecha"
-        msg.contains("HTTP 401")                    -> "API Key inválida o caducada"
-        msg.contains("HTTP 403")                    -> "API Key sin permisos"
         msg.contains("HTTP 404")                    -> "Datos no disponibles"
-        msg.contains("HTTP 5")                      -> "Error en el servidor de REE. Inténtalo más tarde"
+        msg.contains("HTTP 5")                      -> "Error en el servidor. Inténtalo más tarde"
         msg.contains("UnknownHostException") ||
         msg.contains("Unable to resolve host") ||
         msg.contains("NetworkException")            -> "Sin conexión a internet"
@@ -40,12 +35,11 @@ private fun mensajeError(e: Throwable): String {
 }
 
 data class PrecioLuzUiState(
-    val today: DayPrices?        = null,
-    val tomorrow: DayPrices?     = null,
-    val isLoading: Boolean       = true,
-    val error: String?           = null,
-    val tomorrowNotReady: Boolean = false,
-    val noApiKey: Boolean        = true,
+    val today: DayPrices?          = null,
+    val tomorrow: DayPrices?       = null,
+    val isLoading: Boolean         = true,
+    val error: String?             = null,
+    val tomorrowNotReady: Boolean  = false,
 )
 
 @HiltViewModel
@@ -61,59 +55,21 @@ class PrecioLuzViewModel @Inject constructor(
     val theme: StateFlow<AppTheme> = settings.theme
         .stateIn(viewModelScope, SharingStarted.Eagerly, AppTheme.AUTO)
 
-    val apiKey: StateFlow<String?> = settings.apiKey
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
-
     init {
-        viewModelScope.launch {
-            val key = settings.apiKey.first()
-            Log.d(TAG, "init: apiKey=${if (key.isNullOrBlank()) "NULL" else "OK(${key.length}chars)"}")
-            if (key.isNullOrBlank()) {
-                _uiState.update {
-                    it.copy(
-                        noApiKey = true,
-                        isLoading = false,
-                        error = "Configura tu API Key de REE en Ajustes",
-                    )
-                }
-            } else {
-                _uiState.update { it.copy(noApiKey = false) }
-                refresh()
-            }
-        }
+        refresh()
     }
 
     fun refresh() {
         viewModelScope.launch {
-            val key = settings.apiKey.first()
-            Log.d(TAG, "refresh: apiKey=${if (key.isNullOrBlank()) "NULL" else "OK"}")
-            if (key.isNullOrBlank()) {
-                _uiState.update {
-                    it.copy(
-                        noApiKey = true,
-                        isLoading = false,
-                        error = "Configura tu API Key de REE en Ajustes",
-                    )
-                }
-                return@launch
-            }
-
-            _uiState.update { it.copy(isLoading = true, error = null, noApiKey = false) }
+            _uiState.update { it.copy(isLoading = true, error = null) }
 
             try {
                 getTodayPrices().collect { result ->
                     result
-                        .onSuccess { day ->
-                            Log.d(TAG, "todayPrices: OK, ${day.hours.size} horas")
-                            _uiState.update { it.copy(today = day) }
-                        }
-                        .onFailure { e ->
-                            Log.e(TAG, "todayPrices: FAIL", e)
-                            _uiState.update { it.copy(error = mensajeError(e)) }
-                        }
+                        .onSuccess { day -> _uiState.update { it.copy(today = day) } }
+                        .onFailure { e  -> _uiState.update { it.copy(error = mensajeError(e)) } }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "todayPrices: EXCEPTION", e)
                 _uiState.update { it.copy(error = mensajeError(e)) }
             }
 
@@ -121,46 +77,16 @@ class PrecioLuzViewModel @Inject constructor(
                 getTomorrowPrices().collect { result ->
                     result
                         .onSuccess { day ->
-                            Log.d(TAG, "tomorrowPrices: OK, ${day?.hours?.size ?: 0} horas")
                             _uiState.update { it.copy(
                                 tomorrow = day,
                                 tomorrowNotReady = day == null,
                                 isLoading = false,
                             )}
                         }
-                        .onFailure { e ->
-                            Log.e(TAG, "tomorrowPrices: FAIL", e)
-                            _uiState.update { it.copy(isLoading = false) }
-                        }
+                        .onFailure { _uiState.update { it.copy(isLoading = false) } }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "tomorrowPrices: EXCEPTION", e)
                 _uiState.update { it.copy(isLoading = false) }
-            }
-        }
-    }
-
-    fun saveApiKey(key: String) {
-        viewModelScope.launch {
-            Log.d(TAG, "saveApiKey: length=${key.length}")
-            settings.setApiKey(key)
-            _uiState.update { it.copy(noApiKey = false, error = null) }
-            refresh()
-        }
-    }
-
-    fun clearApiKey() {
-        viewModelScope.launch {
-            Log.d(TAG, "clearApiKey")
-            settings.clearApiKey()
-            _uiState.update {
-                it.copy(
-                    noApiKey = true,
-                    today = null,
-                    tomorrow = null,
-                    isLoading = false,
-                    error = "Configura tu API Key de REE en Ajustes",
-                )
             }
         }
     }

@@ -48,17 +48,13 @@ class MainActivity : ComponentActivity() {
             val vm: PrecioLuzViewModel = hiltViewModel()
             val uiState by vm.uiState.collectAsStateWithLifecycle()
             val theme   by vm.theme.collectAsStateWithLifecycle()
-            val apiKey  by vm.apiKey.collectAsStateWithLifecycle()
 
             PrecioLuzTheme(appTheme = theme) {
                 PrecioLuzApp(
                     uiState      = uiState,
                     appTheme     = theme,
-                    apiKey       = apiKey,
                     onCycleTheme = vm::cycleTheme,
                     onRefresh    = vm::refresh,
-                    onSaveApiKey = vm::saveApiKey,
-                    onClearApiKey = vm::clearApiKey,
                 )
             }
         }
@@ -69,11 +65,8 @@ class MainActivity : ComponentActivity() {
 fun PrecioLuzApp(
     uiState: com.precioluz.app.ui.viewmodel.PrecioLuzUiState,
     appTheme: AppTheme,
-    apiKey: String?,
     onCycleTheme: () -> Unit,
     onRefresh: () -> Unit,
-    onSaveApiKey: (String) -> Unit,
-    onClearApiKey: () -> Unit,
 ) {
     val isDark = when (appTheme) {
         AppTheme.AUTO  -> isSystemInDarkTheme()
@@ -101,7 +94,7 @@ fun PrecioLuzApp(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 )
 
-                if (uiState.noApiKey) {
+                uiState.error?.let { error ->
                     GlassCard(
                         isDark = isDark,
                         modifier = Modifier
@@ -109,29 +102,11 @@ fun PrecioLuzApp(
                             .padding(horizontal = 16.dp, vertical = 4.dp),
                     ) {
                         Text(
-                            text = "Configura tu API Key de REE en Ajustes para ver los precios",
+                            text = error,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                            color = MaterialTheme.colorScheme.error,
                         )
-                    }
-                }
-
-                uiState.error?.let { error ->
-                    if (!uiState.noApiKey) {
-                        GlassCard(
-                            isDark = isDark,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 4.dp),
-                        ) {
-                            Text(
-                                text = error,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
                     }
                 }
 
@@ -157,11 +132,8 @@ fun PrecioLuzApp(
 
     if (showSettings) {
         SettingsDialog(
-            currentApiKey = apiKey,
-            isDark        = isDark,
-            onDismiss     = { showSettings = false },
-            onSave        = { onSaveApiKey(it); showSettings = false },
-            onClear       = { onClearApiKey(); showSettings = false },
+            isDark    = isDark,
+            onDismiss = { showSettings = false },
         )
     }
 }

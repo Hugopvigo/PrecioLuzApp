@@ -5,8 +5,8 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [PriceEntity::class],
-    version = 1,
-    exportSchema = false
+    version = 2,
+    exportSchema = false,
 )
 abstract class PrecioLuzDatabase : RoomDatabase() {
     abstract fun priceDao(): PriceDao

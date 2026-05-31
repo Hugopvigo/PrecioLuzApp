@@ -1,12 +1,11 @@
 package com.precioluz.app.data.local
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "prices")
+@Entity(tableName = "prices", primaryKeys = ["date", "hour"])
 data class PriceEntity(
     val date: String,
-    @PrimaryKey val hour: Int,
+    val hour: Int,
     val priceKwh: Double,
-    val priceMwh: Double
+    val priceMwh: Double,
 )

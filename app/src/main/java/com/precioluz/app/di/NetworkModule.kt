@@ -1,7 +1,6 @@
 package com.precioluz.app.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.precioluz.app.data.network.EsiosApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,15 +44,9 @@ object NetworkModule {
     fun provideRetrofit(client: OkHttpClient, json: Json): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://api.esios.ree.es")
+            .baseUrl("https://precioluz.hugopvigo.es")
             .client(client)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideEsiosApi(retrofit: Retrofit): EsiosApi {
-        return retrofit.create(EsiosApi::class.java)
     }
 }

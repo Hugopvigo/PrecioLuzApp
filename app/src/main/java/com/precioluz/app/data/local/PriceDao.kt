@@ -19,4 +19,7 @@ interface PriceDao {
 
     @Query("DELETE FROM prices WHERE date = :date")
     suspend fun deletePricesForDate(date: String)
+
+    @Query("DELETE FROM prices WHERE date < :date")
+    suspend fun deletePricesOlderThan(date: String)
 }
