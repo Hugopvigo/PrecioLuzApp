@@ -60,3 +60,6 @@ Thumbs.db
 
 # Kotlin
 *.kotlin_module
+
+# Docs
+docs/
