@@ -175,7 +175,7 @@ Este proyecto está bajo la licencia **CC BY-NC-SA 4.0** — véase el archivo [
 
 <div align="center">
 
-Hecho con ❤️ y ⚡ para ahorrar dinero y energía por **[Hugo Perez-Vigo](https://hugopvigo.es)** ([@hugopvigo](https://twitter.com/hugopvigo))
+**Desarrollado por [Hugo Perez-Vigo](https://hugopvigo.es)** · [@hugopvigo](https://twitter.com/hugopvigo)
 
 **[⬆ Volver arriba](#-precioluz-app)**
 
