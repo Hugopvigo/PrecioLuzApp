@@ -40,16 +40,23 @@ class PrecioLuzRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             val dateStr = date.toString()
 
-            // 1. Cache Room: si hay 24 registros, sin llamada de red
+            // 1. Cache Room: si hay 24 registros, sin llamada de red.
+            // REE sirve las 24 horas a 0 cuando el día aún no está publicado:
+            // ese placeholder nunca es un precio válido, se expulsa para
+            // traer el día real en cuanto se publique (no servir ni envenenar).
             val cached = dao.getPricesForDate(dateStr)
             if (cached.size == 24) {
-                return@withContext buildDayPrices(date, cached.map { it.hour to it.priceKwh })
+                if (isPlaceholderDay(cached.map { it.priceKwh })) {
+                    dao.deletePricesForDate(dateStr)
+                } else {
+                    return@withContext buildDayPrices(date, cached.map { it.hour to it.priceKwh })
+                }
             }
 
             // 2. Fetch del servidor (hoy + mañana en una sola llamada)
             val response = jsonApi.fetch()
 
-            // 3. Guardar todos los días recibidos en Room
+            // 3. Guardar todos los días recibidos en Room (saveToRoom rechaza placeholders)
             listOfNotNull(response.today, response.tomorrow).forEach { saveToRoom(it) }
 
             // 4. Limpiar fechas anteriores a ayer
@@ -61,13 +68,14 @@ class PrecioLuzRepository @Inject constructor(
                 response.tomorrow?.date -> response.tomorrow
                 else                    -> throw Exception("NO_DATA")
             }
-            if (dayJson.prices.size != 24) throw Exception("NO_DATA")
+            if (dayJson.prices.size != 24 || isPlaceholderDay(dayJson.prices)) throw Exception("NO_DATA")
 
             buildDayPrices(date, dayJson.prices.mapIndexed { idx, p -> idx to p })
         }
 
     private suspend fun saveToRoom(dayJson: DayJson) {
         if (dayJson.prices.size != 24) return
+        if (isPlaceholderDay(dayJson.prices)) return
         dao.insertPrices(dayJson.prices.mapIndexed { hour, price ->
             PriceEntity(date = dayJson.date, hour = hour, priceKwh = price, priceMwh = price * 1000)
         })
@@ -115,3 +123,11 @@ class PrecioLuzRepository @Inject constructor(
         return Tramo.LLANO
     }
 }
+
+/**
+ * Detecta el placeholder de REE: el día entero exactamente a 0 significa
+ * "día aún no publicado", nunca precios reales. Horas sueltas a 0 en un
+ * día por lo demás normal sí son dato genuino de mercado y se conservan.
+ */
+internal fun isPlaceholderDay(prices: List<Double>): Boolean =
+    prices.isNotEmpty() && prices.all { it == 0.0 }

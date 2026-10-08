@@ -11,13 +11,14 @@ plugins {
 android {
     namespace   = "com.precioluz.app"
     compileSdk  = 36
+    buildToolsVersion = "36.0.0"
 
     defaultConfig {
         applicationId = "com.precioluz.app"
         minSdk        = 26          // Android 8.0 — cubre el 95 %+ de dispositivos
         targetSdk     = 36          // Android 16
-        versionCode   = 1
-        versionName   = "1.0.0"
+        versionCode   = 2
+        versionName   = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

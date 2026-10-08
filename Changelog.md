@@ -9,6 +9,9 @@ y el proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Corregido
+- Placeholder todo-ceros de REE ("día no publicado"): ya no se sirve ni se guarda en caché; se trae el día real en cuanto se publica (`isPlaceholderDay` + tests)
+
 ### Añadido
 - Planificación inicial del proyecto (Plan.md, Sprints 1-6)
 - Definición de stack técnico: Kotlin + Jetpack Compose + Material 3
