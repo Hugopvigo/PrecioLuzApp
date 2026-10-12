@@ -23,6 +23,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Firma de release: credenciales en ~/.gradle/gradle.properties (nunca en el repo)
+    signingConfigs {
+        if (project.hasProperty("PRECIOLUZ_STORE_FILE")) {
+            create("release") {
+                storeFile     = file(project.property("PRECIOLUZ_STORE_FILE") as String)
+                storePassword = project.property("PRECIOLUZ_STORE_PASSWORD") as String
+                keyAlias      = project.property("PRECIOLUZ_KEY_ALIAS") as String
+                keyPassword   = project.property("PRECIOLUZ_KEY_PASSWORD") as String
+            }
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -35,6 +47,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             buildConfigField("String", "ESIOS_API_TOKEN", "\"${project.properties["ESIOS_API_TOKEN"] ?: ""}\"")
         }
     }
