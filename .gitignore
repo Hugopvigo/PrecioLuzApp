@@ -63,3 +63,8 @@ Thumbs.db
 
 # Docs
 docs/
+
+# Keystore de release y credenciales (nunca subir)
+keystore/
+*.jks
+*.keystore
