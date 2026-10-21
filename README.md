@@ -1,192 +1,137 @@
-<div align="center">
+<p align="center">
+  <img src="docs/capturas/00-cabecera.png" alt="PrecioLuz — app Android del PVPC horario de la luz" width="100%">
+</p>
 
-# ⚡ PrecioLuz App
+<p align="center">
+  <b>App Android con el precio horario de la luz en España.</b><br>
+  Las 24 horas de hoy y de mañana, con la franja más barata para enchufar.
+</p>
 
-### *El precio de la luz en tu bolsillo*
-
-![Android](https://img.shields.io/badge/Android_26%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-![Kotlin](https://img.shields.io/badge/Kotlin_2.x-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
-![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)
-![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
-
----
-
-*App Android nativa que muestra los precios horarios del PVPC*
-*publicados por REE/ESIOS, con Material 3 y dynamic color.*
-
-<br>
-
-```
-╭──────────────────────────────────────────╮
-│ ⚡ PrecioLuz App                         │
-│                                          │
-│    €/kWh                                 │
-│   ┌─────┐                                │
-│   │0.142│  ● Caro · Punta                │
-│   └─────┘  ↑ Sube a las 15:00            │
-│                                          │
-│   💰 Min: 0.061    💀 Max: 0.201         │
-│                                          │
-│   [ Hoy ]  [ Mañana ]                    │
-╰──────────────────────────────────────────╯
-```
-
-</div>
+<p align="center">
+  <img alt="licencia" src="https://img.shields.io/badge/licencia-CC%20BY--NC--SA%204.0-8E8E93?style=flat-square&labelColor=1a1a1e">
+  <img alt="kotlin" src="https://img.shields.io/badge/Kotlin-2.1-8E8E93?style=flat-square&labelColor=1a1a1e">
+  <img alt="compose" src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=flat-square&labelColor=1a1a1e">
+  <img alt="android" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&labelColor=1a1a1e">
+  <img alt="versión" src="https://img.shields.io/badge/versión-1.0.1-8E8E93?style=flat-square&labelColor=1a1a1e">
+</p>
 
 ---
 
-## ✨ Características
+## Qué es esto
+
+Una app Android nativa para consultar el **PVPC horario de la luz** (indicador
+1001 de Red Eléctrica, zona Península):
+
+- Las **24 horas** de hoy y de mañana, con el mínimo, la media y el máximo.
+- La **franja de dos horas más barata** para enchufar y la hora más cara.
+- **Gráfico de 24 barras** coloreadas por cuartil (verde → rojo) y la lista
+  hora a hora.
+
+Kotlin, Jetpack Compose y Material 3, con MVVM (`StateFlow`) e inyección de
+dependencias con Hilt. Sin cuenta, sin registro y sin configuración: se abre y
+ya está.
+
+## La app
 
 | | |
 |---|---|
-| 📊 | **Gráfico 24h** — barras interactivas con colores por cuartil (verde → rojo) |
-| 💰 | **Mejor hora** — te dice cuándo enchufar para ahorrar |
-| ⚠️ | **Peor hora** — evita los picos de precio |
-| 🔔 | **Notificaciones** — precios de mañana ~20:30 y resumen diario a las 08:00 |
-| ⚡ | **Offline-first** — Room cache, solo 1 llamada API por día |
-| 🌗 | **Dark / Light / Auto** — dynamic color (Material You) |
-| 📱 | **Material 3** — diseño nativo con dynamic color |
+| ![Modo oscuro](docs/capturas/01-app-oscuro.jpg) | ![Modo claro](docs/capturas/02-app-claro.jpg) |
+| Pestaña de mañana, en modo oscuro. | La misma pantalla en modo claro. |
 
----
+Dos pestañas, **Hoy** y **Mañana**:
 
-## 🛠️ Tech Stack
+- En **Hoy** la tarjeta principal muestra el precio de la hora actual, en qué
+  tramo está (valle, llano o punta) y si el precio sube o baja a la hora
+  siguiente.
+- En **Mañana** muestra la media del día, marcada como *estimado*, con el
+  mínimo y el máximo.
+- Debajo, la misma estructura en las dos: mínima / media / máxima, la
+  recomendación de enchufar, el gráfico de 24 horas y la lista horaria.
 
-```
-╭──────────────────────────────────────────╮
-│  🎨  Jetpack Compose   · UI declarativa  │
-│  🟣  Kotlin 2.x        · Lenguaje        │
-│  🏗️  MVVM + StateFlow  · Arquitectura    │
-│  🗄️  Room              · SQLite cache    │
-│  🌐  Retrofit + OkHttp  · HTTP client    │
-│  🔧  Hilt              · DI              │
-│  💾  DataStore          · Preferences    │
-│  ⏰  WorkManager        · Background     │
-│  📡  REE ESIOS API     · Datos oficiales │
-╰──────────────────────────────────────────╯
-```
+El botón de la cabecera alterna el tema **automático → claro → oscuro** y lo
+recuerda entre sesiones.
 
----
+## De dónde salen los precios
 
-## 📸 Vista previa
+La app **no llama a REE directamente**: lee un JSON servido por
+`precioluz.hugoperezvigo.es/api/precios`, con `precioluz.hugopvigo.es` como
+respaldo. Ese backend es a su vez una foto del indicador **1001 (PVPC 2.0TD)**
+de la [API ESIOS de Red Eléctrica](https://api.esios.ree.es), de donde salen
+los valores en €/MWh ya convertidos a €/kWh.
 
-<div align="center">
+Gracias a ese intermediario la app cumple la política de REE de **una sola
+consulta al día**: al abrir, primero mira la caché de Room y, si no está el
+día, pide hoy y mañana en una sola llamada.
 
-| 🌙 Modo Oscuro | ☀️ Modo Claro |
-|:--------------:|:-------------:|
-| ![PrecioLuz Dark](src/PrecioLuzAppDark.jpg) | ![PrecioLuz Clear](src/PrecioLuzAppClear.jpg) |
+Un detalle que ya está resuelto: cuando REE sirve un día entero a 0 (el día
+todavía no está publicado) la app **no lo muestra ni lo guarda**. Lo detecta,
+lo expulsa de la caché y espera al día real. Hay una regresión cubierta por
+tests (`isPlaceholderDay`).
 
-</div>
+Los precios de mañana se publican sobre las **20:15 (CET)**; antes de esa
+hora la pestaña «Mañana» avisa de que aún no están.
 
----
+## Compilar
 
-## 🚀 Uso rápido
-
-### Requisitos
-
-- Android Studio Hedgehog o superior
-- JDK 17+
-- Android SDK 35
-
-### API Key
+Requiere **JDK 17** y el SDK de Android (compileSdk 36, build-tools 36.0.0).
 
 ```bash
-# Copia el template
-cp local.properties.template local.properties
-
-# Añade tu token
-echo "ESIOS_API_TOKEN=tu_token_aqui" >> local.properties
+./gradlew assembleDebug        # APK de debug
+./gradlew assembleRelease      # APK de release
+./gradlew testDebugUnitTest    # 5 tests unitarios
 ```
 
-> 🔑 Solicítala en `api_token@ree.es`. `local.properties` está en `.gitignore`.
+La firma de release busca el keystore en `~/.gradle/gradle.properties` con
+`PRECIOLUZ_STORE_FILE`, `PRECIOLUZ_STORE_PASSWORD`, `PRECIOLUZ_KEY_ALIAS` y
+`PRECIOLUZ_KEY_PASSWORD`. **Ni el keystore ni las contraseñas están en el
+repo**: sin ellos el APK de release sale sin firmar.
 
-### Build
+`local.properties.template` deja el hueco para `ESIOS_API_TOKEN` (la clave
+pública de REE, que se pide en `api_token@ree.es`). Hoy ese valor solo llega
+al `BuildConfig`: la app no lo usa, porque los precios llegan ya convertidos
+desde el backend. `local.properties` está en `.gitignore`.
 
-```bash
-# Debug
-./gradlew assembleDebug
+## Estado del proyecto
 
-# Release
-./gradlew assembleRelease
-```
+- **Hecho**: pestañas de hoy y mañana, caché offline en Room, detección del
+  día no publicado, tramos y cuartiles, tema claro/oscuro/automático y tests
+  de regresión.
+- **Pendiente: las notificaciones locales.** WorkManager está como
+  dependencia y hay una pantalla de Ajustes con los interruptores
+  (`ui/settings/SettingsScreen.kt`), pero no hay ningún `Worker` en el código:
+  de momento no se avisa de nada, hay que abrir la app para ver los precios.
+  El diálogo de Ajustes que sí se abre solo dice que los precios se obtienen
+  sin configuración.
 
----
+`Plan.md` recoge el diseño completo por sprints y `Changelog.md` los cambios.
 
-## 📡 API — Red Eléctrica de España
-
-La app usa el indicador **1001** (PVPC 2.0TD) de la API de REE ESIOS.
-
-| | |
-|---|---|
-| Endpoint | `GET https://api.esios.ree.es/indicators/1001` |
-| Auth | Header `x-api-key: <ESIOS_API_TOKEN>` |
-| Zona | `geo_id = 8741` (Península) |
-| Conversión | EUR/MWh ÷ 1000 = EUR/kWh |
-| Datos mañana | Disponibles ~20:30 CET |
-
----
-
-## 🔔 Notificaciones
-
-| | |
-|---|---|
-| 🌙 | **Precios de mañana** — ~20:30 CET, con retries |
-| ☀️ | **Resumen del día** — 08:00 CET, hora más barata + media |
-
-Se activan/desactivan desde **Ajustes**. No requieren servidor ni Firebase.
-
----
-
-## 📂 Estructura
+## Repositorio
 
 ```
-app/src/main/java/com/precioluz/app/
-├── 📁  data/
-│   ├── 🗄️  local/          · Room DAOs, entities, DataStore
-│   ├── 🌐  api/            · Retrofit interface, DTOs
-│   └── 📦  repository/     · PrecioLuzRepository impl
-├── 🎨  ui/
-│   ├── 📱  viewmodel/      · PrecioLuzViewModel
-│   ├── 🧩  components/     · PriceChart, HourList, SettingsDialog
-│   └── 🎭  theme/          · Material 3 theme, color tiers
-└── 🔧  di/                 · Hilt modules
+precioluzapp/
+├── app/src/main/java/com/precioluz/app/
+│   ├── data/          Room (caché), API, DataStore y repositorio
+│   ├── di/            módulos Hilt (red, base de datos)
+│   ├── domain/        modelos y casos de uso
+│   └── ui/            pantallas (Hoy, Mañana, Ajustes) y componentes
+├── app/src/test/      tests de regresión
+├── src/               capturas de la app en modo claro y oscuro
+├── docs/capturas/     cabecera e imágenes del README
+├── Plan.md            diseño y sprints
+├── Changelog.md
+└── PrecioLuzApp.html  maqueta de la interfaz en HTML
 ```
 
----
+## Proyectos relacionados
 
-## 🔗 Relación con PrecioLuz Web
+Los mismos datos se sirven en <https://precioluz.hugoperezvigo.es>, que es
+justo el backend que consume la app; su código está en
+[Hugopvigo/PrecioLuzWeb](https://github.com/Hugopvigo/PrecioLuzWeb).
 
-Este proyecto es la **app Android** complementaria a [PrecioLuzWeb](https://github.com/Hugopvigo/PrecioLuzWeb).
+## Licencia
 
-La web muestra los precios en el navegador; la app los muestra en tu móvil con notificaciones push y cache offline.
+El código de este repositorio está bajo **CC BY-NC-SA 4.0** (atribución, no
+comercial y obras derivadas bajo la misma licencia). Véase
+[LICENSE](LICENSE).
 
-Los colores, componentes y lógica de tiers son una traducción directa del código Kotlin.
-
----
-
-## 🤝 Contribuir
-
-1. 🍴 Fork el proyecto
-2. 🌿 Crea una rama (`git checkout -b feature/nueva-feature`)
-3. 💾 Commit (`git commit -m 'Add nueva feature'`)
-4. 📤 Push (`git push origin feature/nueva-feature`)
-5. 🔀 Abre un Pull Request
-
----
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia **CC BY-NC-SA 4.0** — véase el archivo [LICENSE](LICENSE) para más detalles.
-
----
-
-<div align="center">
-
-**CC BY-NC-SA 4.0** — Attribution-NonCommercial-ShareAlike
-
----
-
-Desarrollado por **[Hugo Perez-Vigo](https://hugopvigo.es)** · [@hugopvigo](https://x.com/hugopvigo)
-
-[![GitHub](https://img.shields.io/badge/GitHub-Hugopvigo-181717?style=for-the-badge&logo=github)](https://github.com/Hugopvigo)
-
-</div>
+Las capturas son de la propia app.
