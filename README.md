@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/capturas/00-cabecera.png" alt="PrecioLuz — app Android del PVPC horario de la luz" width="100%">
+  <img src="cabecera.png" alt="PrecioLuz — app Android del PVPC horario de la luz" width="100%">
 </p>
 
 <p align="center">
@@ -35,7 +35,7 @@ ya está.
 
 | | |
 |---|---|
-| ![Modo oscuro](docs/capturas/01-app-oscuro.jpg) | ![Modo claro](docs/capturas/02-app-claro.jpg) |
+| ![Modo oscuro](app-oscuro.jpg) | ![Modo claro](app-claro.jpg) |
 | Pestaña de mañana, en modo oscuro. | La misma pantalla en modo claro. |
 
 Dos pestañas, **Hoy** y **Mañana**:
@@ -115,7 +115,9 @@ precioluzapp/
 │   └── ui/            pantallas (Hoy, Mañana, Ajustes) y componentes
 ├── app/src/test/      tests de regresión
 ├── src/               capturas de la app en modo claro y oscuro
-├── docs/capturas/     cabecera e imágenes del README
+├── cabecera.png        cabecera del README
+├── app-oscuro.jpg      captura en modo oscuro
+├── app-claro.jpg       captura en modo claro
 ├── Plan.md            diseño y sprints
 ├── Changelog.md
 └── PrecioLuzApp.html  maqueta de la interfaz en HTML
