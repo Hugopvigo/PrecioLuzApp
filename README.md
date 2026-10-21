@@ -1,3 +1,8 @@
+<meta property="og:title" content="PRECIOLUZAPP">
+<meta property="og:description" content="App Android con el precio horario de la luz en España.">
+<meta property="og:image" content="https://raw.githubusercontent.com/Hugopvigo/PrecioLuzApp/main/og.png">
+
+
 <p align="center">
   <img src="cabecera.png" alt="PrecioLuz — app Android del PVPC horario de la luz" width="100%">
 </p>
