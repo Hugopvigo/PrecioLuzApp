@@ -54,8 +54,7 @@ recuerda entre sesiones.
 ## De dónde salen los precios
 
 La app **no llama a REE directamente**: lee un JSON servido por
-`precioluz.hugoperezvigo.es/api/precios`, con `precioluz.hugopvigo.es` como
-respaldo. Ese backend es a su vez una foto del indicador **1001 (PVPC 2.0TD)**
+`precioluz.hugoperezvigo.es/api/precios`. Ese backend es a su vez una foto del indicador **1001 (PVPC 2.0TD)**
 de la [API ESIOS de Red Eléctrica](https://api.esios.ree.es), de donde salen
 los valores en €/MWh ya convertidos a €/kWh.
 
