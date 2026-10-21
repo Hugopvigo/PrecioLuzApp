@@ -6,10 +6,11 @@ import okhttp3.Request
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// Se intentan en orden: si un dominio está caído se prueba el siguiente
+// Se intentan en orden: si un dominio está caído se prueba el siguiente.
+// El dominio viejo (hugopvigo.es) está en el parking de OVH desde 2019 y no
+// resuelve a ningún servicio: queda fuera de la lista.
 private val PRECIOS_URLS = listOf(
     "https://precioluz.hugoperezvigo.es/api/precios",
-    "https://precioluz.hugopvigo.es/api/precios",
 )
 
 @Singleton
