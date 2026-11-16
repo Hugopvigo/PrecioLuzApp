@@ -16,8 +16,10 @@ import com.precioluz.app.data.datastore.AppTheme
 private val LightColorScheme = lightColorScheme(
     background       = BgLight,
     surface          = GlassBgLight,
-    onBackground     = Color(0xFF0C0E16),
-    onSurface        = Color(0xFF0C0E16),
+    onBackground     = InkLight,
+    onSurface        = InkLight,
+    surfaceVariant   = MutedLight,
+    outline          = GlassBorderLight,
     primary          = BrandOrangeEnd,
     secondary        = BrandOrangeStart,
 )
@@ -25,8 +27,10 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     background       = BgDark,
     surface          = GlassBgDark,
-    onBackground     = Color(0xFFF2F4FB),
-    onSurface        = Color(0xFFF2F4FB),
+    onBackground     = InkDark,
+    onSurface        = InkDark,
+    surfaceVariant   = MutedDark,
+    outline          = GlassBorderDark,
     primary          = BrandOrangeEnd,
     secondary        = BrandOrangeStart,
 )

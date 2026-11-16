@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.precioluz.app.domain.model.DayPrices
+import com.precioluz.app.domain.model.formatPrice
 import java.time.LocalTime
 
 @Composable
@@ -32,8 +33,8 @@ fun HourList(
     GlassCard(modifier = modifier.fillMaxWidth(), isDark = isDark) {
         Column(modifier = Modifier.padding(14.dp)) {
             Text(
-                text  = "Todas las horas",
-                style = MaterialTheme.typography.titleLarge,
+                text  = "Las 24 horas",
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.height(8.dp))
@@ -41,8 +42,9 @@ fun HourList(
             Spacer(Modifier.height(4.dp))
 
             day.hours.forEach { h ->
-                val tierColor = if (isDark) h.tier.colorDark() else h.tier.colorLight()
-                val isNow     = h.hour == currentHour
+                val tierColor   = if (isDark) h.tier.colorDark() else h.tier.colorLight()
+                val tramoColor  = if (isDark) h.tramo.colorDark() else h.tramo.colorLight()
+                val isNow       = h.hour == currentHour
                 val pct       = (h.price / maxPrice).toFloat()
 
                 val mark = when {
@@ -65,7 +67,7 @@ fun HourList(
                                 shape = RoundedCornerShape(12.dp),
                             ) else Modifier
                         )
-                        .padding(horizontal = if (isNow) 8.dp else 0.dp, vertical = 9.dp),
+                        .padding(horizontal = if (isNow) 8.dp else 0.dp, vertical = 7.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // Hora (formato corto — "00h" en vez de "00–01h" para ganar espacio)
@@ -81,7 +83,7 @@ fun HourList(
                         modifier          = Modifier.width(66.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Box(Modifier.size(7.dp).clip(CircleShape).background(tierColor))
+                        Box(Modifier.size(8.dp).clip(CircleShape).background(tramoColor))
                         Spacer(Modifier.width(6.dp))
                         Text(
                             text  = h.tramo.label(),
@@ -111,12 +113,13 @@ fun HourList(
                     Spacer(Modifier.width(6.dp))
                     Text(
                         text     = mark,
+                        style    = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.width(22.dp),
                     )
 
                     // Precio con €
                     Text(
-                        text     = "${"%.3f".format(h.price).replace('.', ',')} €",
+                        text     = "${formatPrice(h.price)} €",
                         style    = MaterialTheme.typography.bodyMedium,
                         color    = priceColor,
                         modifier = Modifier.width(62.dp),

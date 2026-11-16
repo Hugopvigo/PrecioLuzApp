@@ -2,7 +2,16 @@ package com.precioluz.app.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.precioluz.app.domain.model.DayPrices
 import com.precioluz.app.domain.model.PriceTier
 import com.precioluz.app.domain.model.Tramo
+import com.precioluz.app.domain.model.formatPrice
+import com.precioluz.app.domain.model.versusAverage
 import java.time.LocalTime
 
 @Composable
@@ -31,68 +42,69 @@ fun HeroPriceCard(
     val currentHour = LocalTime.now().hour
     val hourData    = if (isToday) day.hours[currentHour] else null
     val price       = hourData?.price ?: day.avg
-    val tier        = hourData?.tier  ?: day.hours[day.min.hour].tier
+    val tier        = hourData?.tier ?: day.hours[day.min.hour].tier
     val tierColor   = if (isDark) tier.colorDark() else tier.colorLight()
 
     GlassCard(modifier = modifier.fillMaxWidth(), isDark = isDark) {
-        // Glow radial desde esquina superior-derecha, coloreado por tier
-        Canvas(modifier = Modifier.matchParentSize()) {
+        // Halo tenue del color del tramo, solo en la esquina superior derecha.
+        Canvas(modifier = Modifier.fillMaxSize()) {
             drawRect(
                 brush = Brush.radialGradient(
-                    colors = listOf(tierColor.copy(alpha = .38f), Color.Transparent),
-                    center = Offset(size.width * 0.88f, 0f),
-                    radius = size.width * 0.95f,
+                    colors = listOf(tierColor.copy(alpha = .16f), Color.Transparent),
+                    center = Offset(size.width * 0.9f, 0f),
+                    radius = size.width * 0.9f,
                 ),
             )
         }
 
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp)) {
-            val label = if (isToday)
-                "Ahora · ${currentHour.toString().padStart(2, '0')}–${(currentHour + 1).toString().padStart(2, '0')}h"
-            else
-                "Precio medio · mañana"
             Text(
-                text = label,
+                text = if (isToday)
+                    "Ahora · ${hour(currentHour)}–${hour(currentHour + 1)} h · ${hourData?.tramo?.label().orEmpty()}"
+                else
+                    "Precio medio · mañana",
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .62f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .66f),
             )
 
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
-                    text  = "%.3f".format(price).replace('.', ','),
+                    text  = formatPrice(price),
                     style = MaterialTheme.typography.displayLarge,
                     color = tierColor,
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text     = "€/kWh",
-                    style    = MaterialTheme.typography.titleLarge,
-                    color    = MaterialTheme.colorScheme.onSurface.copy(alpha = .62f),
-                    modifier = Modifier.padding(bottom = 8.dp),
+                    style    = MaterialTheme.typography.bodyLarge,
+                    color    = MaterialTheme.colorScheme.onSurface.copy(alpha = .60f),
+                    modifier = Modifier.padding(bottom = 7.dp),
                 )
             }
 
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = if (isToday) versusAverage(price, day.avg)
+                       else "Mín ${formatPrice(day.min.price)} · Máx ${formatPrice(day.max.price)}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .60f),
+            )
+
             Spacer(Modifier.height(14.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment     = Alignment.CenterVertically,
-            ) {
+            Row(horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp)) {
                 PriceTierChip(tier = tier, isDark = isDark, estimated = !isToday)
-                if (isToday && hourData != null) {
-                    TramoChip(tramo = hourData.tramo)
-                    TrendChip(day = day, currentHour = currentHour, isDark = isDark)
-                } else if (!isToday) {
-                    Text(
-                        text  = "Mín ${"%.3f".format(day.min.price).replace('.', ',')} · Máx ${"%.3f".format(day.max.price).replace('.', ',')}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = .62f),
-                    )
-                }
+                hourData?.let { TramoChip(tramo = it.tramo) }
+            }
+            if (isToday && hourData != null) {
+                Spacer(Modifier.height(8.dp))
+                TrendChip(day = day, currentHour = currentHour, isDark = isDark)
             }
         }
     }
 }
+
+private fun hour(h: Int): String = (h % 24).toString().padStart(2, '0')
 
 @Composable
 fun PriceTierChip(tier: PriceTier, isDark: Boolean, estimated: Boolean = false) {
@@ -100,20 +112,15 @@ fun PriceTierChip(tier: PriceTier, isDark: Boolean, estimated: Boolean = false) 
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
-            .background(color.copy(alpha = .18f))
-            .padding(horizontal = 9.dp, vertical = 4.dp),
+            .background(color.copy(alpha = .16f))
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         verticalAlignment     = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp),
     ) {
-        Box(
-            modifier = Modifier
-                .size(7.dp)
-                .clip(CircleShape)
-                .background(color),
-        )
+        Box(Modifier.size(7.dp).clip(CircleShape).background(color))
         Text(
             text  = if (estimated) "estimado" else tier.label(),
-            style = MaterialTheme.typography.labelMedium.copy(fontSize = 11.5.sp),
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 11.sp),
             color = color,
         )
     }
@@ -123,13 +130,13 @@ fun PriceTierChip(tier: PriceTier, isDark: Boolean, estimated: Boolean = false) 
 fun TramoChip(tramo: Tramo) {
     val onSurface = MaterialTheme.colorScheme.onSurface
     Text(
-        text     = tramo.label(),
-        style    = MaterialTheme.typography.labelMedium.copy(fontSize = 11.5.sp),
-        color    = onSurface.copy(alpha = .66f),
+        text  = tramo.label(),
+        style = MaterialTheme.typography.labelMedium.copy(fontSize = 11.sp),
+        color = onSurface.copy(alpha = .72f),
         modifier = Modifier
             .clip(RoundedCornerShape(999.dp))
             .background(onSurface.copy(alpha = .06f))
-            .padding(horizontal = 9.dp, vertical = 4.dp),
+            .padding(horizontal = 10.dp, vertical = 5.dp),
     )
 }
 
@@ -140,17 +147,15 @@ fun TrendChip(day: DayPrices, currentHour: Int, isDark: Boolean) {
     val trendTier = if (up) PriceTier.RED else PriceTier.GREEN
     val color     = if (isDark) trendTier.colorDark() else trendTier.colorLight()
 
-    Row(
-        verticalAlignment     = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text  = if (up) "↑" else "↓",
             style = MaterialTheme.typography.labelMedium.copy(fontSize = 13.sp),
             color = color,
         )
+        Spacer(Modifier.width(5.dp))
         Text(
-            text  = "${if (up) "Sube" else "Baja"} a las ${nextHour.toString().padStart(2, '0')}:00",
+            text  = "${if (up) "Sube" else "Baja"} a las ${hour(nextHour)}:00",
             style = MaterialTheme.typography.labelMedium,
             color = color,
         )
