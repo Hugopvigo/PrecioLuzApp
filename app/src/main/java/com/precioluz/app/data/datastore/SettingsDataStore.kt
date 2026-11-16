@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -26,15 +27,28 @@ class SettingsDataStore @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
 
-    // ── Tema (DataStore normal) ──────────────────────────────────────
     private val THEME_KEY = stringPreferencesKey("app_theme")
+    private val NOTIFY_TOMORROW_KEY = booleanPreferencesKey("notify_tomorrow")
+    private val NOTIFY_DAILY_KEY = booleanPreferencesKey("notify_daily")
 
     val theme: Flow<AppTheme> = context.dataStore.data.map { prefs ->
         AppTheme.entries.firstOrNull { it.name == prefs[THEME_KEY] } ?: AppTheme.AUTO
     }
 
+    val notifyTomorrow: Flow<Boolean> = context.dataStore.data.map { it[NOTIFY_TOMORROW_KEY] ?: true }
+
+    val notifyDaily: Flow<Boolean> = context.dataStore.data.map { it[NOTIFY_DAILY_KEY] ?: true }
+
     suspend fun setTheme(theme: AppTheme) {
         context.dataStore.edit { it[THEME_KEY] = theme.name }
+    }
+
+    suspend fun setNotifyTomorrow(enabled: Boolean) {
+        context.dataStore.edit { it[NOTIFY_TOMORROW_KEY] = enabled }
+    }
+
+    suspend fun setNotifyDaily(enabled: Boolean) {
+        context.dataStore.edit { it[NOTIFY_DAILY_KEY] = enabled }
     }
 
     // ── API Key (EncryptedSharedPreferences + StateFlow reactivo) ────

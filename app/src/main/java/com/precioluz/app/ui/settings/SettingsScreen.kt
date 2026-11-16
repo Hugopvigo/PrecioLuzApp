@@ -1,140 +1,129 @@
 package com.precioluz.app.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.rounded.CalendarToday
+import androidx.compose.material.icons.rounded.Schedule
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(
+fun SettingsSheet(
     uiState: SettingsUiState,
-    onBack: () -> Unit,
+    isDark: Boolean,
+    onDismiss: () -> Unit,
     onNotifyTomorrowChanged: (Boolean) -> Unit,
     onNotifyDailyChanged: (Boolean) -> Unit,
-    onDarkThemeChanged: (DarkThemePreference) -> Unit
+    onEnableNotifications: () -> Unit,
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Ajustes") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
-                        )
-                    }
-                }
-            )
-        }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-            NotificationSection(
-                notifyTomorrow = uiState.notifyTomorrow,
-                notifyDaily = uiState.notifyDaily,
-                onNotifyTomorrowChanged = onNotifyTomorrowChanged,
-                onNotifyDailyChanged = onNotifyDailyChanged
+    val surface = if (isDark) Color(0xFF151C29) else Color(0xFFFFFFFF)
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = surface) {
+        Column(Modifier.padding(horizontal = 20.dp).padding(bottom = 28.dp)) {
+            Text("Ajustes", style = MaterialTheme.typography.displayMedium)
+            Spacer(Modifier.height(2.dp))
+            Text(
+                "Los avisos se programan en este dispositivo, sin cuenta ni registro.",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .60f),
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(Modifier.height(20.dp))
+            SwitchRow(
+                icon = Icons.Rounded.CalendarToday,
+                label = "Precios de mañana",
+                description = "Aviso cuando se publican (~20:15 h)",
+                checked = uiState.notifyTomorrow,
+                isDark = isDark,
+                onCheckedChange = { enabled ->
+                    onNotifyTomorrowChanged(enabled)
+                    if (enabled) onEnableNotifications()
+                },
+            )
+            SwitchRow(
+                icon = Icons.Rounded.Schedule,
+                label = "Resumen del día",
+                description = "Mínima, media y máxima a las 08:00 h",
+                checked = uiState.notifyDaily,
+                isDark = isDark,
+                onCheckedChange = { enabled ->
+                    onNotifyDailyChanged(enabled)
+                    if (enabled) onEnableNotifications()
+                },
+            )
 
-            ThemeSection(
-                selected = uiState.darkTheme,
-                onSelected = onDarkThemeChanged
+            Spacer(Modifier.height(16.dp))
+            Text(
+                "PrecioLuz 1.0.1 · datos PVPC de Redeia (REE)",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .44f),
             )
         }
     }
-}
-
-@Composable
-private fun NotificationSection(
-    notifyTomorrow: Boolean,
-    notifyDaily: Boolean,
-    onNotifyTomorrowChanged: (Boolean) -> Unit,
-    onNotifyDailyChanged: (Boolean) -> Unit
-) {
-    Text("Notificaciones", style = MaterialTheme.typography.titleMedium)
-    Spacer(modifier = Modifier.height(8.dp))
-
-    SwitchRow(
-        label = "Precios de mañana",
-        description = "Notificación cuando se publiquen los precios del día siguiente (~20:30)",
-        checked = notifyTomorrow,
-        onCheckedChange = onNotifyTomorrowChanged
-    )
-
-    SwitchRow(
-        label = "Resumen del día",
-        description = "Resumen diario con la hora más barata (8:00)",
-        checked = notifyDaily,
-        onCheckedChange = onNotifyDailyChanged
-    )
 }
 
 @Composable
 private fun SwitchRow(
+    icon: ImageVector,
     label: String,
     description: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    isDark: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier         = Modifier.fillMaxWidth().padding(vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(label, style = MaterialTheme.typography.bodyLarge)
+        Box(
+            modifier = Modifier
+                .size(38.dp)
+                .clip(RoundedCornerShape(11.dp))
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = .07f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurface.copy(alpha = .75f))
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(label, style = MaterialTheme.typography.bodyMedium)
             Text(
                 description,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = .60f),
             )
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
-    }
-}
-
-@Composable
-private fun ThemeSection(
-    selected: DarkThemePreference,
-    onSelected: (DarkThemePreference) -> Unit
-) {
-    Text("Tema", style = MaterialTheme.typography.titleMedium)
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Column(modifier = Modifier.selectableGroup()) {
-        DarkThemePreference.entries.forEach { preference ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = selected == preference,
-                        onClick = { onSelected(preference) },
-                        role = Role.RadioButton
-                    )
-                    .padding(vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(selected = selected == preference, onClick = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    when (preference) {
-                        DarkThemePreference.SYSTEM -> "Sistema"
-                        DarkThemePreference.LIGHT -> "Claro"
-                        DarkThemePreference.DARK -> "Oscuro"
-                    }
-                )
-            }
-        }
+        Spacer(Modifier.width(8.dp))
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = if (isDark) Color(0xFF0E1420) else Color(0xFFFFFFFF),
+                checkedTrackColor = Color(0xFF05994A),
+            ),
+        )
     }
 }

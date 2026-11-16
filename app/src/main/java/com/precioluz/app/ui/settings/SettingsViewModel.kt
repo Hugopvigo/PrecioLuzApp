@@ -1,27 +1,43 @@
 package com.precioluz.app.ui.settings
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.precioluz.app.data.datastore.SettingsDataStore
+import com.precioluz.app.data.notifications.NotificationScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor() : ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val settings: SettingsDataStore,
+    private val scheduler: NotificationScheduler,
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SettingsUiState())
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<SettingsUiState> =
+        combine(settings.notifyTomorrow, settings.notifyDaily) { tomorrow, daily ->
+            SettingsUiState(tomorrow, daily)
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, SettingsUiState())
 
     fun setNotifyTomorrow(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(notifyTomorrow = enabled)
+        viewModelScope.launch {
+            settings.setNotifyTomorrow(enabled)
+            scheduler.sync()
+        }
     }
 
     fun setNotifyDaily(enabled: Boolean) {
-        _uiState.value = _uiState.value.copy(notifyDaily = enabled)
+        viewModelScope.launch {
+            settings.setNotifyDaily(enabled)
+            scheduler.sync()
+        }
     }
 
-    fun setDarkTheme(preference: DarkThemePreference) {
-        _uiState.value = _uiState.value.copy(darkTheme = preference)
+    fun sync() {
+        viewModelScope.launch { scheduler.sync() }
     }
 }

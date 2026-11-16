@@ -36,6 +36,12 @@ Kotlin, Jetpack Compose y Material 3, con MVVM (`StateFlow`) e inyección de
 dependencias con Hilt. Sin cuenta, sin registro y sin configuración: se abre y
 ya está.
 
+El diseño comparte tokens y estética con la
+[web](https://precioluz.hugoperezvigo.es/): superficies sólidas, aurora muy suave,
+tipografía sobria y colores de tramo con significado de precio —valle verde,
+llano ámbar y punta rojo—. La píldora flotante **Hoy / Mañana** de la parte
+inferior se conserva.
+
 ## La app
 
 | | |
@@ -50,11 +56,17 @@ Dos pestañas, **Hoy** y **Mañana**:
   siguiente.
 - En **Mañana** muestra la media del día, marcada como *estimado*, con el
   mínimo y el máximo.
-- Debajo, la misma estructura en las dos: mínima / media / máxima, la
+- Debajo, la misma estructura en las dos: **mínima / media / máxima**, la
   recomendación de enchufar, el gráfico de 24 horas y la lista horaria.
 
+La recomendación tiene un selector de **1 h / 2 h / 3 h** y calcula cuánto
+ahorras esperando a la mejor franja. El gráfico añade la línea de media, una
+franja de tramos y permite arrastrar el dedo para inspeccionar cada hora.
+
 El botón de la cabecera alterna el tema **automático → claro → oscuro** y lo
-recuerda entre sesiones.
+recuerda entre sesiones. El engranaje abre los ajustes con los avisos diarios:
+**precios de mañana (~20:15 h)** y **resumen del día (08:00 h)**, programados
+con WorkManager en el propio dispositivo.
 
 ## De dónde salen los precios
 
@@ -98,16 +110,15 @@ desde el backend. `local.properties` está en `.gitignore`.
 ## Estado del proyecto
 
 - **Hecho**: pestañas de hoy y mañana, caché offline en Room, detección del
-  día no publicado, tramos y cuartiles, tema claro/oscuro/automático y tests
-  de regresión.
-- **Pendiente: las notificaciones locales.** WorkManager está como
-  dependencia y hay una pantalla de Ajustes con los interruptores
-  (`ui/settings/SettingsScreen.kt`), pero no hay ningún `Worker` en el código:
-  de momento no se avisa de nada, hay que abrir la app para ver los precios.
-  El diálogo de Ajustes que sí se abre solo dice que los precios se obtienen
-  sin configuración.
+  día no publicado, tramos y cuartiles, tema claro/oscuro/automático, selector
+  de duración, gráfico con media y tramos, ajustes y notificaciones locales
+  (WorkManager), con tests de regresión.
+- **Pendiente**: refrescar las capturas del README (`app-claro.jpg` y
+  `app-oscuro.jpg`) con el diseño actual; las actuales son de la versión
+  anterior.
 
-`Plan.md` recoge el diseño completo por sprints y `Changelog.md` los cambios.
+`Plan.md` recoge el diseño completo por sprints, `Rediseno.md` el alcance de
+este lavado de cara y `Changelog.md` los cambios.
 
 ## Repositorio
 
