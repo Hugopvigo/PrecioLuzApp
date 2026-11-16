@@ -17,8 +17,8 @@ android {
         applicationId = "com.precioluz.app"
         minSdk        = 26          // Android 8.0 — cubre el 95 %+ de dispositivos
         targetSdk     = 36          // Android 16
-        versionCode   = 2
-        versionName   = "1.0.1"
+        versionCode   = 3
+        versionName   = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

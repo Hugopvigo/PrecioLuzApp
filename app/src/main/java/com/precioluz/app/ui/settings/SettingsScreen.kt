@@ -77,7 +77,7 @@ fun SettingsSheet(
 
             Spacer(Modifier.height(16.dp))
             Text(
-                "PrecioLuz 1.0.1 · datos PVPC de Redeia (REE)",
+                "PrecioLuz 1.1.0 · datos PVPC de Redeia (REE)",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = .44f),
             )

@@ -17,7 +17,7 @@
   <img alt="kotlin" src="https://img.shields.io/badge/Kotlin-2.1-8E8E93?style=flat-square&labelColor=1a1a1e">
   <img alt="compose" src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=flat-square&labelColor=1a1a1e">
   <img alt="android" src="https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&labelColor=1a1a1e">
-  <img alt="versión" src="https://img.shields.io/badge/versión-1.0.1-8E8E93?style=flat-square&labelColor=1a1a1e">
+  <img alt="versión" src="https://img.shields.io/badge/versión-1.1.0-8E8E93?style=flat-square&labelColor=1a1a1e">
 </p>
 
 ---

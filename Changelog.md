@@ -10,6 +10,7 @@ y el proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 ## [Unreleased]
 
 ### Cambiado
+- Versión 1.1.0 (`versionCode` 3): permite actualizar sobre la build anterior firmada con la misma clave.
 - Rediseño de la interfaz alineado con PrecioLuzWeb: tokens de color claros/oscuros,
   superficies sólidas con borde de 1 px, radio de 16 dp y tipografía Bold sobria.
 - Aurora reducida a un halo muy suave (opacidad ~0,3 y ciclo de 28 s) en ambos temas.
